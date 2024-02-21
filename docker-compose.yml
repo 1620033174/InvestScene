@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  padq-business-investscene.db:
+    image: mysql:5.7
+
+  padq-business-investscene.backend:
+    build: ./Services/Business/InvestmentScenGeneration/finance_backend-master    
+    depends_on:
+      - padq-business-investscene.db
+ 
+  padq-business-investscene.flask:
+    build: ./Services/Business/InvestmentScenGeneration/finance_flask
+    depends_on:
+      - padq-business-investscene.backend
+      - padq-business-investscene.db
+
+# sjj 部分
+  padq-business-investscene.sjj-mongodb:
+    image: mongo
+
+  padq-business-investscene.sjj-backend:
+    build: ./Services/Business/InvestmentScenGeneration/stock-backend-raw-main
+    depends_on:
+      - padq-business-investscene.sjj-mongodb
+  
+
+
+  padq-business-investscene.sjj-notebook:
+    image: jupyter/minimal-notebook
+    depends_on:
+      - padq-business-investscene.sjj-mongodb
+      - padq-business-investscene.sjj-backend
+
+  padq-business-investscene.nginx:
+    image: nginx
+    depends_on:
+      - padq-business-investscene.backend
+      - padq-business-investscene.db
+      - padq-business-investscene.flask
+      - padq-business-investscene.sjj-backend
+      - padq-business-investscene.sjj-mongodb

@@ -1,0 +1,7 @@
+/target
+/.env
+/mongodb
+Config.toml
+.idea
+/db
+! .cargo
